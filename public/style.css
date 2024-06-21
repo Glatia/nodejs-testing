@@ -1,0 +1,116 @@
+body {
+    background-color: lightskyblue;
+    font-family: sans-serif;
+}
+
+.center {
+    width: 40%;
+    height: 90%;
+    margin: auto;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 5%;
+    text-align: center;
+}
+
+.content {
+    margin-bottom: 0px;
+    position: absolute;
+    top: 60%;
+    text-align: center;
+    height: 50%;
+    width: 100%
+}
+
+.buttons {
+    height: 25%;
+    width: 100%;
+    position: absolute;
+    bottom: 75px;
+
+}
+
+.confirm {
+    color: lightskyblue;
+}
+
+.deny {
+    color: blueviolet;
+}
+
+p {
+    transition-duration: 0.25s;
+    position: absolute;
+    width: fit-content;
+    margin: auto;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: block;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+    font-size: 10px;
+}
+
+p:hover {
+    transition-duration: 0.25s;
+    color:rgb(169, 222, 255);
+}
+
+p:active {
+    transition-duration: 0s;
+    color:rgb(72, 185, 255)
+}
+
+button {
+    transition-duration: 0.25s;
+    display: block;
+    margin: auto;
+    cursor: pointer;
+    outline: none;
+    width: 50%;
+    height: 50%;
+    border-radius: 20px;
+    border: none;
+    background-color: lightskyblue;
+    color: white;
+    font-size: 200%;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+button:hover {
+    transition-duration: 0.25s;
+    width: 55%;
+    height: 55%;
+    background-color: rgb(169, 222, 255);
+}
+
+button:active {
+    transition-duration: 0s;
+    background-color: rgb(72, 185, 255);
+}
+
+input {
+    display: block;
+    padding: 10px;
+    margin: 0 5px 10px 5px;
+    width: 94.5%;
+    outline: none;
+}
+
+img {
+    display: block;
+    position: absolute;
+    margin: auto;
+    top: 90px;
+    left: 0;
+    right: 0;
+    width: 40%;
+    user-select: none;
+}
