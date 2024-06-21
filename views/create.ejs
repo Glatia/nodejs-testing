@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJS Testing</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+
+    <div class="center">
+        <h1 id="header">Create Account</h1>
+        <img src="https://toowoombaautoservices.com.au/wp-content/uploads/2020/01/person-1824144_1280-1080x1080.png">
+        <div class="content">
+            <form id="form">
+
+                <input name="username" id="username" placeholder="Username" required oninvalid="setCustomValidity('Please Enter a Username')" oninput="setCustomValidity('')">
+                <input name="password" id="password" placeholder="Password" type="password" required oninvalid="setCustomValidity('Please Enter a Password')" oninput="setCustomValidity('')">
+                <input id="confirm" placeholder="Confirm Password" type="password" required oninvalid="setCustomValidity('Please Enter a Password')" oninput="setCustomValidity('')">
+
+            </form>
+            <div class="buttons">
+                <button type="submit" form="form">Submit</button>
+                <p onclick="window.location.href='http://localhost:8080/login'">Have an account? Login instead</p>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+
+        const header = document.getElementById('header')
+        const form = document.getElementById('form')
+
+        const username = document.getElementById('username')
+        const password = document.getElementById('password')
+        const confirm = document.getElementById('confirm')
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            if (password.value == confirm.value) {
+                
+                var formData = new FormData(form);
+
+                var URLformData = new URLSearchParams(formData).toString()
+
+                fetch('http://localhost:8080/create_auth', 
+                    {
+                        method: "POST",
+                        body: URLformData,
+                        headers: {
+                            "Content-type": "application/x-www-form-urlencoded"
+                    }
+                }).then(async (response) => {
+                    await response.json().then((data) => {
+                        console.log(data)
+                        header.textContent = data.title
+                    })
+                })
+
+                
+            } else {
+                password.style.backgroundColor = 'lightred';
+                confirm.style.backgroundColor = 'lightred'
+            }
+        })
+        
+    </script>
+</body>
+</html>
