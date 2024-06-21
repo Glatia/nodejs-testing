@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJS Testing</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+
+    <div class="center">
+        <h1 id="header">Home</h1>
+        <div class="content">
+            <p1>Hello</p1>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const header = document.getElementById('header')
+        const p = document.querySelector("p1")
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            var formData = new FormData(form);
+
+            var URLFormData = new URLSearchParams(formData).toString()
+
+            fetch('http://localhost:8080/home_auth')
+            .then(response => {
+                return response.json()
+            })
+            .then(data => {
+                console.log(data)
+                p.textContent = p.textContent + ` ${data.session.username}`
+            })
+
+        })
+        
+    </script>
+</body>
+</html>
