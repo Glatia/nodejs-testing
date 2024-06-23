@@ -17,7 +17,7 @@
             <form id="form">
 
                 <input name="username" placeholder="Username" required oninvalid="setCustomValidity('Please Enter a Username')" oninput="setCustomValidity('')">
-                <input name="password" placeholder="Password" required oninvalid="setCustomValidity('Please Enter a Password')" oninput="setCustomValidity('')">
+                <input name="password" placeholder="Password" type="password" required oninvalid="setCustomValidity('Please Enter a Password')" oninput="setCustomValidity('')">
 
             </form>
             <div class="buttons">
@@ -32,7 +32,8 @@
         const socket = io();
         const header = document.getElementById('header')
         const form = document.getElementById('form')
-
+        var title;
+        
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -47,11 +48,13 @@
                 headers: {
                     "Content-type": "application/x-www-form-urlencoded"
                 }
-            }).then(async (response) => {
-                await response.json()
-                .then(data => {
-                    console.log(data)
-                    header.textContent = data.title
+            })
+                .then(async (response) => {
+                    await response.json()
+                    .then(data => {
+                        title = data.title
+                        console.log(data)
+                        header.textContent = title
 
                 })
             })

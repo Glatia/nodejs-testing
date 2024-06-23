@@ -37,6 +37,7 @@
         const username = document.getElementById('username')
         const password = document.getElementById('password')
         const confirm = document.getElementById('confirm')
+        var title;
 
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -46,19 +47,23 @@
 
                 var URLformData = new URLSearchParams(formData).toString()
 
-                fetch('http://localhost:8080/create_auth', 
-                    {
-                        method: "POST",
-                        body: URLformData,
-                        headers: {
-                            "Content-type": "application/x-www-form-urlencoded"
+                fetch("http://localhost:8080/create_auth",
+                {
+                    method: "POST",
+                    body: URLformData,
+                    headers: {
+                        "Content-type": "application/x-www-form-urlencoded"
                     }
-                }).then(async (response) => {
-                    await response.json().then((data) => {
-                        console.log(data)
-                        header.textContent = data.title
-                    })
                 })
+                    .then(async (response) => {
+                        await response.json()
+                        .then((data) => {
+                            title = data.title
+                            header.textContent = title
+                            console.log(title)
+                        })
+                    })
+                    
 
                 
             } else {
