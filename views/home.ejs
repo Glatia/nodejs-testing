@@ -14,6 +14,9 @@
         <h1 id="header">Home</h1>
         <div class="content">
             <p1>Hello</p1>
+            <div class="buttons"">
+                <button onclick="fetch('http://localhost:8080/logout'); location.reload()" style="margin: auto;">Logout</button>
+            </div>
         </div>
     </div>
 
@@ -22,23 +25,17 @@
         const socket = io();
         const header = document.getElementById('header')
         const p = document.querySelector("p1")
-
-        form.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            var formData = new FormData(form);
-
-            var URLFormData = new URLSearchParams(formData).toString()
-
-            fetch('http://localhost:8080/home_auth')
-            .then(response => {
-                return response.json()
-            })
-            .then(data => {
-                console.log(data)
-                p.textContent = p.textContent + ` ${data.session.username}`
-            })
-
+        function redirect(url) {
+            window.location.href = url
+        }
+    
+        fetch('http://localhost:8080/home_auth')
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            console.log(data)
+            p.textContent = p.textContent + ` ${data.session.username}`
         })
         
     </script>

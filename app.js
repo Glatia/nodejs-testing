@@ -42,13 +42,15 @@ function update_data() {
     })
 }
 
+
+
 io.on('connection', (socket) => {
     console.log('A user has connected')
 })
 
 
 app.get('/', (req, res) => {
-    res.redirect('/login');
+    res.redirect("/login");
 })
 
 app.get('/login', (req, res) => {
@@ -60,20 +62,34 @@ app.get('/create', (req, res) => {
 })
 
 app.get('/home', (req, res) => {
-    res.json({
-        session: req.session
-    })
+    if (req.session.logged_in) {
+        res.render("home")
+    } else {
+        res.redirect("/login")
+    }
+})
+
+
+app.get("/logout", (req, res) => {
+    req.session.logged_in = false
+    req.session.username = ""
+    res.session.save()
+})
+
+app.get("/home_auth", (req, res) => {
+    res.json({session: req.session})
 })
 
 app.post('/create_auth', (req, res) => {
     update_data()
+    const { username, password } = req.body
     setTimeout(() => {
         const create_auth = new Promise((resolve, reject) => {
             let users = []
             accounts.forEach(account => {
                 users.push(account.username);
             })
-            if (users.includes(req.body.username)) {
+            if (users.includes(username)) {
                 reject('Username Taken');
             } else {
                 resolve('Account Created');
@@ -82,31 +98,33 @@ app.post('/create_auth', (req, res) => {
         create_auth.then(
             (value) => {
                 console.log(value)
-                bcrypt.hash(req.body.password, 10, (err, hash) => {
+                bcrypt.hash(password, 10, (err, hash) => {
 
                     accounts[accounts.length] = {
-                        username: req.body.username,
+                        username: username,
                         password: hash
                     }
                     fs.writeFileSync('accounts.json', JSON.stringify(accounts, null, 2));
-                    req.session.username = req.body.username;
+                    req.session.username = username;
                     req.session.logged_in = true;
-                    req.session.save(async () => {
+                    req.session.save(() => {
                         console.log(req.session)
                     })
                     res.json({
-                        title: "Logged In!"
+                        title: "Logged In!",
+                        redirect: true
                     })
                 })
             }, (error) => {
                 console.log(error);
-                req.session.username = req.body.username;
+                req.session.username = username;
                 req.session.logged_in = false;
                 req.session.save(async () => {
                     console.log(req.session)
                 })
                 res.json({
-                    title: error
+                    title: error,
+                    redirect: false
                 })
             }
         )
@@ -115,13 +133,16 @@ app.post('/create_auth', (req, res) => {
 
 app.post('/auth', (req, res) => {
     update_data()
+    const { username, password } = req.body
+
     setTimeout(() => {
         const check_auth = new Promise((resolve, reject) => {
             let i = 0
+
             if (accounts.length > 0) {
                 accounts.forEach((account) => {
-                    if (account.username == req.body.username) {
-                        bcrypt.compare(req.body.password, account.password, (err, same) => {
+                    if (account.username == username) {
+                        bcrypt.compare(password, account.password, (err, same) => {
                             if (err) throw err;
                             else {
                                 if (same) {
@@ -152,10 +173,12 @@ app.post('/auth', (req, res) => {
                 })
 
                 res.json({
-                    title: "Logged In!"
+                    title: "Logged In!",
+                    redirect: true
                 })
 
-            }, (error) => {
+            }, 
+            (error) => {
                 console.log(error)
                 req.session.username = req.body.username;
                 req.session.logged_in = false
@@ -164,12 +187,15 @@ app.post('/auth', (req, res) => {
                 })
 
                 res.json({
-                    title: error
+                    title: error,
+                    redirect: false
                 })
             }
         )
     }, 10)
 })
+
+
 const listener = server.listen(8080, () => {
     console.log(`Listening on port ${listener.address().port}`)
 })

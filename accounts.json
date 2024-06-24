@@ -1,6 +1,22 @@
 [
   {
-    "username": "ligma",
-    "password": "$2b$10$EnLxbkHfeeFof8uaT76kgeY.dYaKSNo62fAA.rVF5QTUzYyIHuwcq"
+    "username": "Matthew Murten",
+    "password": "$2b$10$/Yw0ImQfabGbqCQb2VxQV.u3h9Svj01VxE7V7jjFEaeY7N9t.0mGC"
+  },
+  {
+    "username": "Hello There",
+    "password": "$2b$10$FKDnomOL6m6s1d/Xw9NeN./g4QoDRuym7vOTSvn3bUpz24XPC/uha"
+  },
+  {
+    "username": "asdf",
+    "password": "$2b$10$7fiA5mtO6lXRlkX0ZojG4e.tMgB8tketFtew0B0MOUinLlKMNLoIW"
+  },
+  {
+    "username": "guh",
+    "password": "$2b$10$eZhwxblVz0uheZf9KqHgQOBanpnHvhEyv9Z11DhhoF1w2i3PahkEq"
+  },
+  {
+    "username": "King Pin",
+    "password": "$2b$10$N7MUMmO4UInl0XQEfNn29OjWDdJx36CCA3hIPq19zDZQcOwfaQGeq"
   }
 ]

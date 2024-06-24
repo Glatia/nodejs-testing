@@ -39,6 +39,9 @@
         const confirm = document.getElementById('confirm')
         var title;
 
+        function redirect(url) {
+            window.location.href = url
+        }
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             if (password.value == confirm.value) {
@@ -60,7 +63,9 @@
                         .then((data) => {
                             title = data.title
                             header.textContent = title
-                            console.log(title)
+                            if (data.redirect) {
+                                redirect("http://localhost:8080/home")
+                            }
                         })
                     })
                     

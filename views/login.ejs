@@ -33,7 +33,11 @@
         const header = document.getElementById('header')
         const form = document.getElementById('form')
         var title;
-        
+
+        function redirect(url) {
+            window.location.href = url
+        }
+
         form.addEventListener('submit', (e) => {
             e.preventDefault();
 
@@ -53,8 +57,10 @@
                     await response.json()
                     .then(data => {
                         title = data.title
-                        console.log(data)
                         header.textContent = title
+                        if (data.redirect) {
+                            redirect("http://localhost:8080/home")
+                        }
 
                 })
             })
