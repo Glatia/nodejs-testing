@@ -59,7 +59,7 @@
                         title = data.title
                         header.textContent = title
                         if (data.redirect) {
-                            redirect("http://localhost:8080/home")
+                            redirect("http://localhost:8080" + data.redirect)
                         }
 
                 })

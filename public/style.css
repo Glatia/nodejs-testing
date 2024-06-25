@@ -71,6 +71,7 @@ button {
     transition-duration: 0.25s;
     display: block;
     margin: auto;
+    margin-bottom: 2.5px;
     cursor: pointer;
     outline: none;
     width: 50%;
