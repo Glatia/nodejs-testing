@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJS Testing</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+
+    <div class="center">
+        <p onclick="location.replace('/home')" class="back"></p>
+        <h1 id="header">Admin Panel</h1>
+        <div class="content" style="overflow-y: scroll; height: 85%; top: 50px">
+            <ul style="list-style-type: none; text-align: left; padding: 10px">
+            </ul>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const list = document.querySelector("ul")
+        const header = document.getElementById('header')
+        const p = document.querySelector("p1")
+        var clicked;
+
+        function redirect(url) {
+            window.location.href = url
+        }
+    var update = () => {
+        fetch('http://localhost:8080/admin_details')
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            while(list.hasChildNodes()) {
+                    list.removeChild(list.lastChild)
+                }
+            console.log(data)
+            for (let i = 0; i <= Object.keys(data.accounts).length - 1; i++) {
+
+
+                let newListItem = document.createElement("li")
+
+                newListItem.setAttribute('id', i)
+                let user = Object.keys(data.accounts)[i]
+                newListItem.innerHTML = `<strong>username</strong>: ${user}  <strong><i>|</i></strong>  <strong>id</strong>: ${data.accounts[user].id}`
+
+                list.appendChild(newListItem)
+                
+            }
+            let listitems = document.querySelectorAll("li")
+            let i = 0;
+            listitems.forEach(items => {
+                    let button = document.createElement('button')
+                    button.classList.add("adminbutton")
+                    button.setAttribute("id", i)
+                    button.setAttribute("onclick", "clicked(this)")
+                    items.appendChild(button)
+
+                    i++
+                })
+            clicked = (button) => {
+        
+                let user = {username: Object.keys(data.accounts)[button.id]}
+
+                let url_params = new URLSearchParams(user).toString()
+
+                console.log(url_params)
+                
+                fetch("http://localhost:8080/admin_delete", 
+                    {
+                        method: "POST",
+                        body: url_params,
+                        headers: {
+                            "Content-type": "application/x-www-form-urlencoded"
+                        }
+                    }
+                )
+                update()
+            }
+
+        })
+    }
+    update()
+        
+    </script>
+</body>
+</html>

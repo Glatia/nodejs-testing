@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NodeJS Testing</title>
+
+    <link rel="stylesheet" href="/style.css">
+
+</head>
+<body>
+
+    <div class="center">
+        <p onclick="location.replace('/home')" class="back"></p>
+        <h1 id="header">Login</h1>
+        <img src="https://toowoombaautoservices.com.au/wp-content/uploads/2020/01/person-1824144_1280-1080x1080.png">
+        <div class="content">
+            <form id="form">
+
+                <input name="username" placeholder="Username" required oninvalid="setCustomValidity('Please Enter a Username')" oninput="setCustomValidity('')">
+                <input name="password" placeholder="Password" type="password" required oninvalid="setCustomValidity('Please Enter a Password')" oninput="setCustomValidity('')">
+
+            </form>
+            <div class="buttons">
+                <button type="submit" class="button" form="form">Submit</button>
+                <p onclick="window.location.href='http://localhost:8080/home'">Not an admin? Go back to the home page</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const header = document.getElementById('header')
+        const form = document.getElementById('form')
+        var title;
+
+        function redirect(url) {
+            window.location.href = url
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            var formData = new FormData(form);
+
+            var URLFormData = new URLSearchParams(formData).toString()
+
+            fetch('http://localhost:8080/admin_auth', 
+            {
+                method: "POST",
+                body: URLFormData,
+                headers: {
+                    "Content-type": "application/x-www-form-urlencoded"
+                }
+            })
+                .then(async (response) => {
+                    await response.json()
+                    .then(data => {
+                        title = data.title
+                        header.textContent = title
+                        if (data.redirect) {
+                            redirect("http://localhost:8080" + data.redirect)
+                        }
+
+                })
+            })
+        
+        })
+        
+    </script>
+</body>
+</html>

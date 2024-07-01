@@ -22,7 +22,7 @@
 
             </form>
             <div class="buttons">
-                <button type="submit" form="form">Submit</button>
+                <button type="submit" class="button" form="form">Submit</button>
                 <p onclick="window.location.href='http://localhost:8080/login'">Have an account? Login instead</p>
             </div>
         </div>
@@ -46,35 +46,44 @@
             e.preventDefault();
             if (password.value == confirm.value) {
                 
-                var formData = new FormData(form);
+                if (username.value.length <= 10) {
 
-                var URLformData = new URLSearchParams(formData).toString()
+                    var formData = new FormData(form);
 
-                fetch("http://localhost:8080/create_auth",
-                {
-                    method: "POST",
-                    body: URLformData,
-                    headers: {
-                        "Content-type": "application/x-www-form-urlencoded"
-                    }
-                })
-                    .then(async (response) => {
-                        await response.json()
-                        .then((data) => {
-                            title = data.title
-                            header.textContent = title
-                            if (data.redirect) {
-                                redirect("http://localhost:8080" + data.redirect)
-                            }
-                        })
+                    var URLformData = new URLSearchParams(formData).toString()
+
+                    fetch("http://localhost:8080/create_auth",
+                    {
+                        method: "POST",
+                        body: URLformData,
+                        headers: {
+                            "Content-type": "application/x-www-form-urlencoded"
+                        }
                     })
+                        .then(async (response) => {
+                            await response.json()
+                            .then((data) => {
+                                title = data.title
+                                header.textContent = title
+                                if (data.redirect) {
+                                    redirect("http://localhost:8080" + data.redirect)
+                                }
+                            })
+                        })
+                        
                     
-
-                
+                    
+                } else {
+                    header.textContent = "Username Too Long (> 10)"
+                    username.style.backgroundColor = "#FF7F7F"
+                    username.style.color = "white"
+                }
             } else {
-                password.style.backgroundColor = '#FF7F7F';
-                confirm.style.backgroundColor = '#FF7F7F'
-            }
+                    password.style.backgroundColor = '#FF7F7F';
+                    confirm.style.backgroundColor = '#FF7F7F';
+                    password.style.color = 'white';
+                    confirm.style.color = 'white';
+                }
         })
         
     </script>

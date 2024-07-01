@@ -14,9 +14,10 @@
         <h1 id="header">Home</h1>
         <div class="content">
             <p1>Hello</p1>
-            <div class="buttons"">
-                <button onclick="fetch('http://localhost:8080/logout'); location.reload()">Logout</button>
-                <button onclick="fetch('http://localhost:8080/delete'); location.reload()">Delete Account</button>
+            <div class="buttons" style="top: 20px">
+                <button onclick="fetch('http://localhost:8080/logout'); location.reload()" class="button">Logout</button>
+                <button onclick="fetch('http://localhost:8080/delete'); location.reload()" class="button">Delete Account</button>
+                <button onclick="location.href = 'http://localhost:8080/admin_login'" class="button">Admin Login</button>
             </div>
         </div>
     </div>

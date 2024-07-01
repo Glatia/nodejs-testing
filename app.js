@@ -14,6 +14,7 @@ const { Server } = require('socket.io');
 const server = createServer(app);
 const io = new Server(server);
 
+require('dotenv').config()
 
 // For encrypting data
 const bcrypt = require('bcrypt');
@@ -25,6 +26,8 @@ app.use(express.urlencoded({
 
 }));
 
+app.use(express.json())
+
 // Use a session middleware
 app.use(session({
 
@@ -32,6 +35,7 @@ app.use(session({
     resave: true,
     username: '',
     logged_in: false,
+    admin: false,
     saveUninitialized: true
 
 }))
@@ -43,7 +47,7 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 var accounts;
-
+var ids;
 // Updates data so you have the most recent users possible
 async function update_data() {
 
@@ -53,6 +57,12 @@ async function update_data() {
         resolve(accounts)
 
     })
+}
+
+function update_file(data, filepath) {
+
+    fs.writeFileSync(filepath, data)
+
 }
 
 // Authenticator
@@ -119,6 +129,30 @@ async function create_account(username, password) {
 
 }
 
+async function admin_auth(username, password) {
+
+    const admin_username = process.env.ADMIN_USERNAME;
+    const admin_password = process.env.ADMIN_PASSWORD;
+    
+    try {
+
+        if (username !== admin_username) {
+            throw new Error("Invalid Username");
+        }
+
+        if (password !== admin_password) {
+            throw new Error("Invalid Password");
+        }
+
+        return true;
+
+    } catch (err) {
+
+        throw err;
+
+    }
+}
+
 // Notifies of a connection to the web socket (not currently used)
 io.on('connection', (socket) => {
 
@@ -160,6 +194,31 @@ app.get('/home', (req, res) => {
     }
 })
 
+app.get('/admin', (req, res) => {
+
+    if (req.session.admin) {
+        res.render('admin')
+    } else {
+        res.redirect("/admin_login")
+    }
+})
+
+app.get('/admin_login', (req, res) => {
+
+    if (req.session.logged_in) {
+        res.render('admin_login')
+    } else {
+        res.redirect("/login")
+    }
+
+})
+
+app.get('/admin_details', async (req, res) => {
+
+    await update_data()
+    res.json({accounts: accounts})
+})
+
 // Deletes the account of the user when a 'GET' request is sent to /delete
 app.get("/delete", async (req, res) => {
 
@@ -167,7 +226,7 @@ app.get("/delete", async (req, res) => {
 
     delete accounts[req.session.username]
 
-    fs.writeFileSync('accounts.json', JSON.stringify(accounts))
+    update_file(JSON.stringify(accounts, null, 2), "accounts.json")
 
     req.session.logged_in = false
     req.session.username = ""
@@ -208,7 +267,7 @@ app.post('/create_auth', async (req, res) => {
         const new_accounts = await create_account(username, password)
 
         // If all is good, (no errors thrown), wait for the file to be rewritten with the new account data
-        await fs.writeFileSync("accounts.json", JSON.stringify(new_accounts, null, 2))
+        await update_file(JSON.stringify(new_accounts, null, 2), "accounts.json")
 
         // Updates session information (logs you in to your new account)
         req.session.username = username
@@ -248,7 +307,7 @@ app.post('/auth', async (req, res) => {
     try {
 
         // Check if credentials are correct, (if an error is thrown from authenticate it will also throw here)
-        const authorized = await authenticate_account(username, password);
+        let authorized = await authenticate_account(username, password);
 
         // If no errors are thrown, update session information
         req.session.username = username;
@@ -276,6 +335,46 @@ app.post('/auth', async (req, res) => {
 
         })
     }
+})
+
+app.post('/admin_delete', (req, res) => {
+
+    // Deletes the account sent in the request
+    delete accounts[req.body.username]
+    
+    // Rewrites the file
+    update_file(JSON.stringify(accounts, null, 2), "accounts.json")
+    
+    // Ends the response (since the request will stay open until we say otherwise)
+    res.end()
+})
+
+// Runs when a 'POST' request is sent to /admin_auth
+app.post('/admin_auth', async (req, res) => {
+
+    // Sets the username and password to the two values of req.body
+    const { username, password } = req.body
+
+    try {
+
+        // Runs the authorization code (if an error is thrown it'll throw here too)
+        let authorized = await admin_auth(username, password);
+
+        // Logs that you have logged in as an admin
+        req.session.admin = true;
+
+        // Saves the session and sends a json response
+        req.session.save(() => {
+            res.json({title: "Welcome, Admin!", redirect: "/admin"})
+        });
+
+
+    } catch (err) {
+        
+        // If an error is thrown in admin_auth, send that error as a response
+        res.json({title: err.message, redirect: false});
+    }
+
 })
 
 

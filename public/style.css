@@ -1,3 +1,7 @@
+html {
+    overflow-y: overlay;
+}
+
 body {
     background-color: lightskyblue;
     font-family: sans-serif;
@@ -67,7 +71,7 @@ p:active {
     color:rgb(72, 185, 255)
 }
 
-button {
+.button {
     transition-duration: 0.25s;
     display: block;
     margin: auto;
@@ -80,28 +84,29 @@ button {
     border: none;
     background-color: lightskyblue;
     color: white;
-    font-size: 200%;
+    font-size: 2vw;
     font-family: sans-serif;
     font-weight: bold;
 }
 
-button:hover {
+.button:hover {
     transition-duration: 0.25s;
     width: 55%;
     height: 55%;
     background-color: rgb(169, 222, 255);
 }
 
-button:active {
+.button:active {
     transition-duration: 0s;
     background-color: rgb(72, 185, 255);
 }
 
 input {
+    box-sizing: border-box;
     display: block;
     padding: 10px;
     margin: 0 5px 10px 5px;
-    width: 94.5%;
+    width: 100%;
     outline: none;
 }
 
@@ -114,4 +119,55 @@ img {
     right: 0;
     width: 40%;
     user-select: none;
+}
+
+.adminbutton {
+    width: 15px;
+    height: 15px;
+    margin: 0 auto;
+    padding: 0;
+    display: block;
+    float: right;
+    line-height: 15px;
+    text-align: center;
+    font-size: 15px;
+    background-color: lightskyblue;
+    color: white
+}
+
+.adminbutton::after {
+    content: "\00d7";
+}
+
+ul {
+    overflow: hidden;
+}
+
+.back {
+    float: left;
+    position: relative;
+    display: flex;
+    top: 25px;
+    width: 20px;
+    height: 20px;
+    margin: 0 auto;
+    padding: 5px;
+    display: block;
+    line-height: 20px;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    text-align:center;
+    color: lightskyblue;
+
+}
+
+.back::after {
+    content: "\2190"
+}
+
+.back:active {
+    transition: 0.25s;
+    color: rgb(72, 185, 255);
 }
