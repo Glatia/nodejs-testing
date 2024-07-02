@@ -47,15 +47,18 @@ app.use(express.static('public'));
 app.set('view engine', 'ejs');
 
 var accounts;
-var ids;
+var ids = []
 // Updates data so you have the most recent users possible
 async function update_data() {
 
     return new Promise(async (resolve, reject) => {
 
         accounts = await JSON.parse(await fs.readFileSync('accounts.json', 'utf-8'))
+        Object.keys(accounts).forEach(account => {
+            ids.push(accounts[account].id)
+            return false
+        });
         resolve(accounts)
-
     })
 }
 
@@ -109,15 +112,29 @@ async function create_account(username, password) {
         // Hashes the password with 10 salt rounds, encrypting it to be stored securely
         password_hash = await bcrypt.hashSync(password, 10)
 
+        let new_id = ids[0] + 1 || 0
+        console.log(ids, new_id)
+        Object.keys(accounts).every(account => {
+            if (!ids.includes(new_id)) {
+                console.log(new_id)
+                return false
+            } else {
+                new_id++
+                return true
+
+            }
+        })
         // Sets the new account with a key of [username] with the password and the account number
         accounts[username] = {
 
             password: password_hash,
-            id: Object.keys(accounts).length + 1
+            id: new_id
 
         }
 
         // Only runs if no errors were thrown thus far, meaning your account was successfully created
+        new_id = 1
+        ids = []
         return accounts
 
     } catch (err) {
