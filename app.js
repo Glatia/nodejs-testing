@@ -48,12 +48,15 @@ app.set('view engine', 'ejs');
 
 var accounts;
 var ids = []
+
 // Updates data so you have the most recent users possible
 async function update_data() {
 
     return new Promise(async (resolve, reject) => {
 
         accounts = await JSON.parse(await fs.readFileSync('accounts.json', 'utf-8'))
+
+        // Pushes the ID's of every account into a list
         Object.keys(accounts).forEach(account => {
             ids.push(accounts[account].id)
             return false
@@ -64,7 +67,7 @@ async function update_data() {
 
 function update_file(data, filepath) {
 
-    fs.writeFileSync(filepath, data)
+    fs.writeFileSync(filepath, data);
 
 }
 
@@ -112,8 +115,10 @@ async function create_account(username, password) {
         // Hashes the password with 10 salt rounds, encrypting it to be stored securely
         password_hash = await bcrypt.hashSync(password, 10)
 
-        let new_id = ids[0] + 1 || 0
-        console.log(ids, new_id)
+        // The new ID is 
+        let new_id = 0
+
+        // For every account, check if new_id is taken, if it isnt, then use that id for the account
         Object.keys(accounts).every(account => {
             if (!ids.includes(new_id)) {
                 console.log(new_id)
@@ -124,7 +129,7 @@ async function create_account(username, password) {
 
             }
         })
-        // Sets the new account with a key of [username] with the password and the account number
+        // Sets the new account with a key of [whatever username you entered] with the password and the account number
         accounts[username] = {
 
             password: password_hash,
@@ -146,25 +151,31 @@ async function create_account(username, password) {
 
 }
 
+// Admin Authenticator
 async function admin_auth(username, password) {
 
+    // Sets the admin_username/password to the ones set in the environment variables
     const admin_username = process.env.ADMIN_USERNAME;
     const admin_password = process.env.ADMIN_PASSWORD;
     
     try {
 
+        // If the username sent isn't the same as the admin username, throw a new error
         if (username !== admin_username) {
             throw new Error("Invalid Username");
         }
 
+        // If the password sent isn't the same as the admin password, throw a new error
         if (password !== admin_password) {
             throw new Error("Invalid Password");
         }
 
+        // If no errors were thrown until this point, return true
         return true;
 
     } catch (err) {
 
+        // If there was an error, throw it again to be handled in the request function
         throw err;
 
     }
@@ -233,7 +244,7 @@ app.get('/admin_login', (req, res) => {
 app.get('/admin_details', async (req, res) => {
 
     await update_data()
-    res.json({accounts: accounts})
+    res.json({accounts: accounts, current_account: req.session.username})
 })
 
 // Deletes the account of the user when a 'GET' request is sent to /delete
@@ -256,7 +267,7 @@ app.get("/logout", (req, res) => {
 
     req.session.logged_in = false
     req.session.username = ""
-    res.session.save()
+    req.session.save()
 
 })
 
